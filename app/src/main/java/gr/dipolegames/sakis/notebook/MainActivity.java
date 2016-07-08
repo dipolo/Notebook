@@ -1,5 +1,6 @@
 package gr.dipolegames.sakis.notebook;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String NOTE_CATEGORY_EXTRA = "gr.dipolegames.sakis.notebook.Category";
     public static final String NOTE_FRAGMENT_TO_LOAD_EXTRA = "gr.dipolegames.sakis.notebook.Fragment_To_Load";
 
-    public enum FragmentToLaunch {VIEW, EDIT}
+    public enum FragmentToLaunch {VIEW, EDIT, CREATE}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.action_add_note) {
+            Intent intent = new Intent(this, NoteDetailActivity.class);
+            intent.putExtra(MainActivity.NOTE_FRAGMENT_TO_LOAD_EXTRA, FragmentToLaunch.CREATE);
+            startActivity(intent);
             return true;
         }
 
