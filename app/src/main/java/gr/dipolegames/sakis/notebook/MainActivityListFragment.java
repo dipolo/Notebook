@@ -28,7 +28,7 @@ public class MainActivityListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstance){
         super.onActivityCreated(savedInstance);
 
-        notes = new ArrayList<Note>();
+/*        notes = new ArrayList<Note>();
 
         notes.add(new Note("this is a new note title sakis sakis sakis sakis sakis sakis sakis sakis sakis sakis sakis sakis ",
                 "this the body of our note this the body of our note this the body of our note this the body of our note this the body of our note this the body of our note this the body of our note this the body of our note ", Note.Category.PERSONAL));
@@ -51,6 +51,12 @@ public class MainActivityListFragment extends ListFragment {
         notes.add(new Note("this is a new note title", "this the body of our note", Note.Category.PERSONAL));
         notes.add(new Note("this is a new note title", "this the body of our note", Note.Category.TECHINAL));
         notes.add(new Note("this is a new note title", "this the body of our note", Note.Category.QUOTE));
+*/
+
+        NotebookDbAdapter dbAdapter = new NotebookDbAdapter(getActivity().getBaseContext());
+        dbAdapter.open();
+        notes = dbAdapter.getAllNotes();
+        dbAdapter.close();
 
         noteAdapter = new NoteAdapter(getActivity(), notes);
         setListAdapter(noteAdapter);
