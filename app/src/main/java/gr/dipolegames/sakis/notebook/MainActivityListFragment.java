@@ -87,12 +87,24 @@ public class MainActivityListFragment extends ListFragment {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int rowPosition = info.position;
+        Note note  = (Note) getListAdapter().getItem(rowPosition);
         switch (item.getItemId()){
             case R.id.edit:
                 //Do something here
                 LaunchNoteDetailActivity(MainActivity.FragmentToLaunch.EDIT, rowPosition);
                 Log.d("menu Clicks", "We pressed edit!");
                 return  true;
+            case R.id.delete:
+                NotebookDbAdapter dbAdapter = new NotebookDbAdapter(getActivity().getBaseContext());
+                dbAdapter.open();
+                dbAdapter.deleteNote(note.getId());
+
+                notes.clear();
+                notes.addAll(dbAdapter.getAllNotes());
+                noteAdapter.notifyDataSetChanged();
+
+                dbAdapter.close();
+                return true;
         }
         return super.onContextItemSelected(item);
     }

@@ -12,6 +12,7 @@
 
     <!--Main List Long Context Menu-->
     <string name="edit_menu">Edit</string>
+    <string name="delete_menu">Delete</string>
 
     <!-- Fragment Widget Strng -->
     <string name="save_note_button">Save Note</string>
