@@ -2,10 +2,12 @@ package gr.dipolegames.sakis.notebook;
 
 
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -23,6 +25,8 @@ public class MainActivityListFragment extends ListFragment {
 
     private ArrayList<Note> notes;
     private  NoteAdapter noteAdapter;
+
+    private AlertDialog confirmDeleteDialogObject;
 
     @Override
     public void onActivityCreated(Bundle savedInstance){
@@ -87,7 +91,7 @@ public class MainActivityListFragment extends ListFragment {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int rowPosition = info.position;
-        Note note  = (Note) getListAdapter().getItem(rowPosition);
+        final Note note  = (Note) getListAdapter().getItem(rowPosition);
         switch (item.getItemId()){
             case R.id.edit:
                 //Do something here
@@ -95,15 +99,26 @@ public class MainActivityListFragment extends ListFragment {
                 Log.d("menu Clicks", "We pressed edit!");
                 return  true;
             case R.id.delete:
-                NotebookDbAdapter dbAdapter = new NotebookDbAdapter(getActivity().getBaseContext());
-                dbAdapter.open();
-                dbAdapter.deleteNote(note.getId());
+                AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(getActivity());
+                confirmBuilder.setTitle("Are you sure?");
+                confirmBuilder.setMessage("Are you sure you want to delete this note?");
 
-                notes.clear();
-                notes.addAll(dbAdapter.getAllNotes());
-                noteAdapter.notifyDataSetChanged();
+                confirmBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        DeleteNote(note.getId());
+                    }
+                });
 
-                dbAdapter.close();
+                confirmBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Do nothing
+                    }
+                });
+                confirmDeleteDialogObject = confirmBuilder.create();
+                confirmDeleteDialogObject.show();
+
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -126,5 +141,17 @@ public class MainActivityListFragment extends ListFragment {
                 break;
         }
         startActivity((intent));
+    }
+
+    private void DeleteNote(long idToDelete){
+        NotebookDbAdapter dbAdapter = new NotebookDbAdapter(getActivity().getBaseContext());
+        dbAdapter.open();
+        dbAdapter.deleteNote(idToDelete);
+
+        notes.clear();
+        notes.addAll(dbAdapter.getAllNotes());
+        noteAdapter.notifyDataSetChanged();
+
+        dbAdapter.close();
     }
 }
